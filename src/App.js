@@ -1,33 +1,45 @@
 import logo from './logo.svg';
 //Importamos la imagen y le asignamos un nombre
-import imageRickyMortySonrisa from './img/rick-morty.png'
+//import imageRickyMortySonrisa from './img/rick-morty.png'
 import './App.css';
-import { useState } from 'react';
-import Characters from './components/Characters';
+import { useState, useEffect, useCallback } from 'react';
+//import Characters from './components/Characters';
+import useFetch from './components/useFetch';
 
 function App() {
   const [characters, setCharacters] = useState(null);
   //console.log(characters); //null
   //consultaremos los datos de los personajes en la API
-  const reqApi = async () => {
-    const api = await fetch("https://rickandmortyapi.com/api/character")
-    const characterApi = await api.json();
-    setCharacters(characterApi.results);
-    
+  const { data, loading, error} = useFetch("https://rickandmortyapi.com/api/character")
+  
+  console.log("App -> Cuerpo de App")
+  useEffect(() =>{
+    if(!loading &&  data ) setCharacters(data.results);
+    console.log('App -> useEffect en App //Cambia variable characters')
+    }, [data]);
+
+  function soloPrueba(){
+    console.log('App -> función soloPrueba')
   }
 
-  console.log(characters); // resultados
+  useCallback(function soloPruebaCallback(){
+    console.log('App -> función soloPruebaCallback')
+  }, [])
+
+  if(loading) return (<div>loading...</div>)
+  if(error) return (<div>Error...</div>)
+
 
   return (
     <div className="App">
       <header className="App-header">
         <h1 className="title">Rick & Morty</h1>
         {characters ? (
-          <Characters characters={characters} setCharacters={setCharacters}></Characters>
+          //<Characters characters={characters} setCharacters={setCharacters}></Characters>
+          console.log("App -> Pintados los charactereres")
         ) : (
-          <>
-          <img src={imageRickyMortySonrisa} alt="Rick & Morty" className="img-home"></img>
-          <button onClick={reqApi} className="btn-search">Buscar Personaje</button>
+          <>      
+          <button className="btn-search">Buscar Personaje</button>
           </>
         )}
     </header>
